@@ -1,5 +1,6 @@
 package in.stvayush.booksproject.controllers;
 
+import in.stvayush.booksproject.constants.Endpoints;
 import in.stvayush.booksproject.dtos.GroupDto;
 import in.stvayush.booksproject.services.GroupsService;
 import java.util.List;
@@ -16,16 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/groups")
+@RequestMapping(value = Endpoints.GROUP)
 public class GroupsController {
     private final GroupsService groupsService;
 
-    @PostMapping("/create")
+    @PostMapping(value = Endpoints.CREATE)
     public GroupDto createGroup(@RequestBody GroupDto groupDto) {
         return groupsService.createGroup(groupDto);
     }
 
-    @PutMapping("/update")
+    @PutMapping(value = Endpoints.UPDATE)
     public GroupDto addMemberToGroup(@RequestParam String groupId, @RequestParam List<String> userIds) {
         GroupDto groupDto = new GroupDto();
         try {

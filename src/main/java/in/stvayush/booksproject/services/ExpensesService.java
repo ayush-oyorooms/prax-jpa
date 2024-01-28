@@ -44,7 +44,7 @@ public class ExpensesService {
         return splits;
     }
 
-    public ExpenseDto addExpense(ExpenseDto expenseDto) throws Exception {
+    public ExpenseDto createExpense(ExpenseDto expenseDto) throws Exception {
         Expense expense = new Expense();
         List<Member> expenseMembers = new ArrayList<>();
         if (expenseDto != null) {

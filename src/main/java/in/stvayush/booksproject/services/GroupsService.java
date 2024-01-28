@@ -45,6 +45,7 @@ public class GroupsService {
             if (!CollectionUtils.isEmpty(userIds)) {
                 List<Member> members = membersService.findMembersById(userIds);
                 _group.setMembers(members);
+                members.forEach(member -> member.getGroups().add(_group));
                 groupsRepository.save(_group);
                 groupDto.setId(_group.getId());
                 groupDto.setName(_group.getName());

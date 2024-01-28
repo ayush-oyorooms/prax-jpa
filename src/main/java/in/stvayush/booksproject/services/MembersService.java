@@ -1,11 +1,14 @@
 package in.stvayush.booksproject.services;
 
 import in.stvayush.booksproject.dtos.MemberDto;
+import in.stvayush.booksproject.dtos.SplitDto;
+import in.stvayush.booksproject.models.Group;
 import in.stvayush.booksproject.models.Member;
 import in.stvayush.booksproject.repository.MembersRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +21,7 @@ import org.springframework.util.CollectionUtils;
 public class MembersService {
     private final MembersRepository membersRepository;
 
-    public MemberDto addMember(MemberDto memberDto) {
+    public MemberDto createMember(MemberDto memberDto) {
         if (memberDto != null) {
             Member member = new Member();
             if (StringUtils.isNotEmpty(memberDto.getName())) {
@@ -28,6 +31,38 @@ public class MembersService {
             }
         }
         return memberDto;
+    }
+
+    public List<MemberDto> findMemberById(List<String> memberIds) {
+        List<MemberDto> memberDtos = new ArrayList<>();
+        List<Member> members = findMembersById(memberIds);
+        if (!CollectionUtils.isEmpty(members)) {
+            members.forEach(member -> {
+                MemberDto memberDto = new MemberDto();
+                memberDto.setId(member.getId());
+                memberDto.setName(member.getName());
+                memberDto.setGroups(member.getGroups().stream().map(Group::getName).toList());
+                member.getOwedSplits().forEach(owedSplit -> {
+                    SplitDto splitDto = SplitDto.builder()
+                        .splitId(owedSplit.getId())
+                        .expenseId(owedSplit.getExpense().getId())
+                        .amount(owedSplit.getAmount())
+                        .build();
+                    memberDto.getOwedSplits().add(splitDto);
+                });
+                member.getPaidSplits().forEach(paidSplit -> {
+                    SplitDto splitDto = SplitDto.builder()
+                        .splitId(paidSplit.getId())
+                        .expenseId(paidSplit.getExpense().getId())
+                        .amount(paidSplit.getAmount())
+                        .build();
+                    memberDto.getPaidSplits().add(splitDto);
+                });
+//                memberDto.setPaidSplits(member.getPaidSplits());
+                memberDtos.add(memberDto);
+            });
+        }
+        return memberDtos;
     }
 
     public List<Member> findMembersById(List<String> userIds) {

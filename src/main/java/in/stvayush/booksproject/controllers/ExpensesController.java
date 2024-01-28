@@ -1,5 +1,6 @@
 package in.stvayush.booksproject.controllers;
 
+import in.stvayush.booksproject.constants.Endpoints;
 import in.stvayush.booksproject.dtos.ExpenseDto;
 import in.stvayush.booksproject.services.ExpensesService;
 import lombok.RequiredArgsConstructor;
@@ -12,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/expenses")
+@RequestMapping(value = Endpoints.EXPENSE)
 public class ExpensesController {
     private final ExpensesService expensesService;
 
-    @PostMapping("/add")
-    public ExpenseDto addExpense(@RequestBody ExpenseDto expenseDto) {
+    @PostMapping(value = Endpoints.CREATE)
+    public ExpenseDto createExpense(@RequestBody ExpenseDto expenseDto) {
         ExpenseDto exd = new ExpenseDto();
         try {
-            exd = expensesService.addExpense(expenseDto);
+            exd = expensesService.createExpense(expenseDto);
         } catch (Exception e) {
             log.error("An error {} occurred while adding an expense {}", e, expenseDto);
         }
