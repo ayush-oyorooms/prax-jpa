@@ -40,4 +40,8 @@ public class Expense {
 
     @OneToMany(mappedBy = "expense", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<Split> splits = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "related_group_id")
+    private Group group;
 }

@@ -8,7 +8,6 @@ import in.stvayush.booksproject.repository.MembersRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +57,6 @@ public class MembersService {
                         .build();
                     memberDto.getPaidSplits().add(splitDto);
                 });
-//                memberDto.setPaidSplits(member.getPaidSplits());
                 memberDtos.add(memberDto);
             });
         }

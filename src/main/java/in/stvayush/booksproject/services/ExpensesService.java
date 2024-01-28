@@ -2,6 +2,7 @@ package in.stvayush.booksproject.services;
 
 import in.stvayush.booksproject.dtos.ExpenseDto;
 import in.stvayush.booksproject.models.Expense;
+import in.stvayush.booksproject.models.Group;
 import in.stvayush.booksproject.models.Member;
 import in.stvayush.booksproject.models.Split;
 import in.stvayush.booksproject.repository.ExpensesRepository;
@@ -22,6 +23,7 @@ public class ExpensesService {
     private final ExpensesRepository expensesRepository;
     private final MembersService membersService;
     private final SplitsService splitsService;
+    private final GroupsService groupsService;
 
     private List<Split> splitEvenly(Expense expense) {
         int totalAmt = expense.getTotalAmount();
@@ -44,10 +46,12 @@ public class ExpensesService {
         return splits;
     }
 
-    public ExpenseDto createExpense(ExpenseDto expenseDto) throws Exception {
+    // add group too
+    public ExpenseDto createExpense(String groupId, ExpenseDto expenseDto) throws Exception {
         Expense expense = new Expense();
         List<Member> expenseMembers = new ArrayList<>();
-        if (expenseDto != null) {
+        Optional<Group> expenseGroup = groupsService.findGroupById(groupId);
+        if (expenseGroup.isPresent() && expenseDto != null) {
             if (StringUtils.isNotEmpty(expenseDto.getTitle())) {
                 expense.setTitle(expenseDto.getTitle());
                 List<Split> splits = new ArrayList<>();
@@ -56,6 +60,7 @@ public class ExpensesService {
                 }
                 expenseMembers = membersService.findMembersById(expenseDto.getMemberIds());
                 expense.setMembers(expenseMembers);
+                expense.setGroup(expenseGroup.get());
                 Optional<Member> godPayer = membersService.findMemberById(expenseDto.getGodPayerId());
                 if (godPayer.isPresent()) {
                     expense.setGodPayer(godPayer.get());
@@ -77,5 +82,18 @@ public class ExpensesService {
             throw new IllegalArgumentException("Null ExpenseDto received for persisting");
         }
         return expenseDto;
+    }
+
+    public List<ExpenseDto> getExpensesInAGroup(String groupId) {
+        List<Expense> expenses = expensesRepository.findExpensesByGroupId(Long.parseLong(groupId));
+        List<ExpenseDto> expenseDtos = new ArrayList<>();
+        expenses.forEach(expenseEntity -> {
+            ExpenseDto expenseDto = new ExpenseDto();
+            expenseDto.setTitle(expenseEntity.getTitle());
+            expenseDto.setAmount(expenseEntity.getTotalAmount());
+            expenseDto.setMemberNames(expenseEntity.getMembers().stream().map(Member::getName).toList());
+            expenseDtos.add(expenseDto);
+        });
+        return expenseDtos;
     }
 }

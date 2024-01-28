@@ -60,4 +60,8 @@ public class GroupsService {
         }
         return groupDto;
     }
+
+    public Optional<Group> findGroupById(String groupId) {
+        return groupsRepository.findById(Long.parseLong(groupId));
+    }
 }
