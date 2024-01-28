@@ -1,10 +1,8 @@
 package in.stvayush.booksproject.controllers;
 
 import in.stvayush.booksproject.dtos.PostCommentDto;
-import in.stvayush.booksproject.models.Book;
 import in.stvayush.booksproject.models.PostComment;
 import in.stvayush.booksproject.services.PostCommentsService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +26,10 @@ public class PostCommentsController {
     public void addComment(@RequestBody PostComment postComment, @RequestParam Long postId) {
         postCommentsService.addComment(postComment, postId);
     }
+
+//    public PostCommentDto retrieveComment(@RequestParam Long commentId) {
+//        return postCommentsService.
+//    }
 
     @PutMapping("/update")
     public ResponseEntity<PostCommentDto> updateComment(@RequestBody PostCommentDto postCommentDto, @RequestParam Long commentId) {
